@@ -1,0 +1,38 @@
+version: '3'
+
+services:
+  php:
+    container_name: php
+    image: all_together:latest
+    restart: always
+    depends_on:
+      - db
+    network_mode: "host" 
+    volumes:
+      - ./src:/var/www/html
+
+  db:
+    container_name: mysql-db
+    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8 --collation-server=utf8_unicode_ci
+    image: mysql:8.0.32
+      #network_mode: "host" 
+    ports:
+      - 3306:3306
+    volumes:
+      - db:/var/lib/mysql
+      - ./sqls:/docker-entrypoint-initdb.d
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: zhon
+      MYSQL_DATABASE: allTogether
+      MYSQL_USER: cloud
+      MYSQL_PASSWORD: password
+volumes:
+  db:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /D/code/cloud/db
